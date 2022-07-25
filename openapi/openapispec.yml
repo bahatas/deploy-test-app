@@ -1,0 +1,24 @@
+swagger: '2.0'
+#x-stoplight:
+#  id: 1
+
+info:
+  title: DEPLOY SERVICE
+  version: 1.0.0
+  description: Deploy test service
+schemes:
+  - http
+produces:
+  - application/json
+paths:
+  /api/hello:
+    parameters: []
+    get:
+      summary: Hello from Deploy test
+      operationId: get-greetings-v1
+      x-google-backend:
+        address: 'https://deploy-test-image-t5fdrk6htq-nw.a.run.app'
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '200':
+          description: OK
