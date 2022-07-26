@@ -40,6 +40,14 @@ lint-test-job:   # This job also runs in the test stage.
     - echo "Linting code... This will take about 10 seconds."
     - sleep 10
     - echo "No lint issues found."
+newman_test:
+    stage: test
+    image: 
+      name: node:16-alpine
+    script:
+        - npm i -g newman
+        - npm i -g newman-reporter-postman-cloud
+        - newman run "https://api.getpostman.com/collections/22000525-e89a5855-577d-4241-9e3a-d479bec72335?apikey=$POSTMAN_API_KEY"  --environment "https://api.getpostman.com/environments/22000525-413e2450-1bdf-4a1d-a1b8-fe8612ed9a88?apikey=$POSTMAN_API_KEY" -r postman-cloud --reporter-apiKey "$POSTMAN_API_KEY" --reporter-workspaceId "e2216f64-0c6a-44cf-844b-d1f0109c8401" --reporter-integrationIdentifier 119343-${CI_PIPELINE_ID}
 
 deploy-job:      # This job runs in the deploy stage.
   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
