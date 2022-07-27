@@ -81,9 +81,7 @@ paths:
                 type: string
               email:
                 type: string
-                description: >-
-                  If a new email is given, the user's email verified property
-                  will be set to false.
+                description: 'If a new email is given, the user''s email verified property will be set to false.'
               dateOfBirth:
                 type: string
           description: Patch user properties to update.
@@ -122,6 +120,33 @@ paths:
       operationId: get-all-
       description: Retrieve the information of the user with the matching user ID.
   /hello:
+    parameters: []
+    get:
+      summary: Get User Info by User ID
+      tags: []
+      responses:
+        '200':
+          description: Response Retrieved
+          schema:
+            type: object
+            properties:
+              response:
+                type: string
+            x-examples:
+              example-1:
+                response: HELLO FROM DEPLOY TEST
+          examples:
+            example-1:
+              response: HELLO FROM DEPLOY TEST
+        '':
+          examples:
+            example-1: HELLO FROM DEPLOY TEST
+          description: OK
+      operationId: get-initial-test-response
+      description: 'Get Successfull Hello from deploy test api '
+      parameters: []
+      x-internal: false
+  /hello - copy:
     parameters: []
     get:
       summary: Get User Info by User ID
