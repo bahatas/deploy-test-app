@@ -1,0 +1,113 @@
+{
+	"info": {
+		"_postman_id": "e89a5855-577d-4241-9e3a-d479bec72335",
+		"name": "DEPLOY SERVICE",
+		"description": "Deploy test service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Hello from Deploy test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a462b18a-4caf-4ee3-8291-27c989978849",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"id": "17f0fa4e-23da-4060-8b44-acda7819f027",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/hello",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"hello"
+					]
+				}
+			},
+			"response": [
+				{
+					"id": "e9c9aedc-0fd8-4da4-bcd7-518a09d9caa0",
+					"name": "OK",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/hello",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"hello"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "text",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "text/plain"
+						}
+					],
+					"cookie": [],
+					"responseTime": null,
+					"body": ""
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "75d77235-cfca-423c-921a-83e06848310b",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "ac075ae9-ce9f-4ba4-a7df-b2cf452f8cf8",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "c4b2f9cc-da3e-4c22-9ab0-2dfddd611b06",
+			"key": "baseUrl",
+			"value": "https://deploy-test-image-t5fdrk6htq-nw.a.run.app",
+			"type": "string"
+		},
+		{
+			"id": "c657e4ae-a836-44cd-9004-1a0a40496b2b",
+			"key": "POSTMAN_API_KEY",
+			"value": "PMAK-62dfe1d3c48d74156728bdf0-70a567e71570a30a79f15f7351f9d4bcd7",
+			"type": "string"
+		}
+	]
+}
