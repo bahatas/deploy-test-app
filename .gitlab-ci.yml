@@ -16,40 +16,73 @@
 # This specific template is located at:
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
 
-stages:          # List of stages for jobs, and their order of execution
-  - build
-  - test
+
+image: kloiadocker/docker-compose:v1
+services:
+  - docker:dind
+stages:
+  - prepare
+  - install
+  - push
   - deploy
-
-build-job:       # This job runs in the build stage, which runs first.
-  stage: build
+before_script:
+  - export DOCKER_HOST=127.0.0.1:2375
+  - apk add --no-cache make bash
+  - mkdir -p ~/.aws /root/.aws
+#  - echo -e "[<profile-name>]\nregion=eu-central-1" > ~/.aws/credentials
+  - export COMMIT_TIME=$(git show -s --format=%ct $CI_COMMIT_SHA)
+#  - eval $(aws ecr get-login --profile=<profile-name> --no-include-email)
+#  - export CI_REGISTRY_IMAGE="<account-id>.dkr.ecr.eu-central-1.amazonaws.com/deneme"
+prepare:
+  stage: prepare
   script:
-    - echo "Compiling the code..."
-    - echo "Compile complete."
-
-unit-test-job:   # This job runs in the test stage.
-  stage: test    # It only starts when the job in the build stage completes successfully.
+    - docker-compose stop
+    - docker-compose rm -v
+  tags:
+    - run
+install:
+  stage: install
   script:
-    - echo "Running unit tests... This will take about 60 seconds."
-    - sleep 60
-    - echo "Code coverage is 90%"
-
-lint-test-job:   # This job also runs in the test stage.
-  stage: test    # It can run at the same time as unit-test-job (in parallel).
+    - docker build -t deneme .
+    - docker tag deneme bahadockerhub/deploy-test-app2
+  tags:
+    - run
+#push:
+#  stage: push
+#  script:
+#    - docker push <account-id>.dkr.ecr.eu-central-1.amazonaws.com/deneme:<tag>
+#  allow_failure: true
+#  tags:
+#    - run
+deploy:
+  stage: deploy
   script:
-    - echo "Linting code... This will take about 10 seconds."
-    - sleep 10
-    - echo "No lint issues found."
+    - docker-compose up
+  only:
+    - master
+  tags:
+    - run
+  when: manual
+
+push:
+  stage: push
+  script:
+    - docker push bahadockerhub/deploy-test-app2
+
+  tags:
+    - run
+
+
 newman_test:
-    stage: test
-    image: 
-      name: node:16-alpine
-    script:
-        - npm i -g newman
-        - npm i -g newman-reporter-postman-cloud
-        - newman run "https://api.getpostman.com/collections/22000525-e89a5855-577d-4241-9e3a-d479bec72335?apikey=PMAK-62dfe1d3c48d74156728bdf0-70a567e71570a30a79f15f7351f9d4bcd7"  --environment "https://api.getpostman.com/environments/22000525-413e2450-1bdf-4a1d-a1b8-fe8612ed9a88?apikey=PMAK-62dfe1d3c48d74156728bdf0-70a567e71570a30a79f15f7351f9d4bcd7" -r postman-cloud --reporter-apiKey "PMAK-62dfe1d3c48d74156728bdf0-70a567e71570a30a79f15f7351f9d4bcd7" --reporter-workspaceId "e2216f64-0c6a-44cf-844b-d1f0109c8401" --reporter-integrationIdentifier 119343-${CI_PIPELINE_ID}
+  stage: test
+  image:
+    name: node:16-alpine
+  script:
+    - npm i -g newman
+    - npm i -g newman-reporter-postman-cloud
+    - newman run "https://api.getpostman.com/collections/22000525-e89a5855-577d-4241-9e3a-d479bec72335?apikey=PMAK-62dfe1d3c48d74156728bdf0-70a567e71570a30a79f15f7351f9d4bcd7"  --environment "https://api.getpostman.com/environments/22000525-413e2450-1bdf-4a1d-a1b8-fe8612ed9a88?apikey=PMAK-62dfe1d3c48d74156728bdf0-70a567e71570a30a79f15f7351f9d4bcd7" -r postman-cloud --reporter-apiKey "PMAK-62dfe1d3c48d74156728bdf0-70a567e71570a30a79f15f7351f9d4bcd7" --reporter-workspaceId "e2216f64-0c6a-44cf-844b-d1f0109c8401" --reporter-integrationIdentifier 119343-${CI_PIPELINE_ID}
 
-deploy-job:      # This job runs in the deploy stage.
+deploy-job:      # This job runs in the deploying stage.
   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
   script:
     - echo "Deploying application..."
